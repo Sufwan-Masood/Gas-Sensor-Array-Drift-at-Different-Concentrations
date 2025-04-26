@@ -8,7 +8,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, adjusted_rand_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, adjusted_rand_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Step 1: Load and Combine the Data
 batches = []
@@ -116,3 +118,45 @@ kmeans_ari = adjusted_rand_score(y_test, y_pred_kmeans)
 
 print("K-Means Results:")
 print(f"Adjusted Rand Index: {kmeans_ari:.4f}")
+
+# Step 4: Visualization and Analysis
+# 4.1 PCA Scatter Plot
+gas_names = {1: 'Ethanol', 2: 'Ethylene', 3: 'Ammonia', 4: 'Acetaldehyde', 5: 'Acetone', 6: 'Toluene'}
+
+plt.figure(figsize=(10, 6))
+for gas_label in range(1, 7):
+    mask = (y == gas_label)
+    plt.scatter(X_pca[mask, 0], X_pca[mask, 1], label=gas_names[gas_label], alpha=0.6)
+
+plt.xlabel('PCA Component 1')
+plt.ylabel('PCA Component 2')
+plt.title('PCA Scatter Plot of Gas Data')
+plt.legend()
+plt.grid(True)
+plt.savefig("PCA_Scatter_Plot.png")
+plt.show()
+
+# 4.2 Confusion Matrix for Random Forest
+cm = confusion_matrix(y_test, y_pred_rf)
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=list(gas_names.values()), yticklabels=list(gas_names.values()))
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix for Random Forest')
+plt.savefig("ConfusionMatrixforRandomForest.png")
+plt.show()
+
+# 4.3 Bar Chart of Algorithm Performance
+algorithms = ['KNN', 'Naïve Bayes', 'Random Forest']
+accuracies = [knn_accuracy, nb_accuracy, rf_accuracy]
+
+plt.figure(figsize=(8, 6))
+plt.bar(algorithms, accuracies, color=['skyblue', 'lightgreen', 'salmon'])
+plt.xlabel('Algorithm')
+plt.ylabel('Accuracy')
+plt.title('Comparison of Classification Algorithms')
+plt.ylim(0, 1)
+for i, v in enumerate(accuracies):
+    plt.text(i, v + 0.02, f'{v:.4f}', ha='center')
+plt.savefig("Bar_Chart_of_Algorithm_Performance.png")
+plt.show()
