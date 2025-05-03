@@ -125,7 +125,7 @@ gas_names = {1: 'Ethanol', 2: 'Ethylene', 3: 'Ammonia', 4: 'Acetaldehyde', 5: 'A
 
 plt.figure(figsize=(10, 6))
 for gas_label in range(1, 7):
-    mask = (y == gas_label)
+    mask = (y == gas_label) # y is gas label from data
     plt.scatter(X_pca[mask, 0], X_pca[mask, 1], label=gas_names[gas_label], alpha=0.6)
 
 plt.xlabel('PCA Component 1')
